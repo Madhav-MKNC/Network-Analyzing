@@ -1,9 +1,5 @@
 # Network-Analyzing
 
-
-<a href="https://github.com/Madhav-MKNC/Python-Packet-Sniffer">More Here</a>
-
-
 <!-- all merged here -->
 
 
@@ -531,7 +527,7 @@
 
 
 
-
+<a href="https://www.binarytides.com/python-packet-sniffer-code-linux/">resource</a>
 
 
 
