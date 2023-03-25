@@ -532,7 +532,7 @@
           <th>Protocol data unit (PDU)</th>
           <th>Function</th>
           <th>TCP/IP protocols</th>
-          <th>Host/Media</th>
+          <th>Layers type</th>
           <!-- <th>Host Layers</th>
           <th>Media Layers</th> -->
        </tr>
