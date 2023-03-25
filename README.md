@@ -600,8 +600,3 @@
 
 
 
-
-<a href="https://www.binarytides.com/python-packet-sniffer-code-linux/">resource</a>
-
-
-
