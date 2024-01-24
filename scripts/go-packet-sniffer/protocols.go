@@ -4,6 +4,8 @@ import (
     "encoding/binary"
     "net"
     "strings"
+    "os"
+    "time"
 )
 
 // Ethernet structure
@@ -118,4 +120,62 @@ type HTTP struct {
 
 func NewHTTP(data []byte) *HTTP {
     return &HTTP{Data: string(data)}
+}
+
+// Pcap structure
+type Pcap struct {
+    file *os.File
+}
+
+func NewPcap(filename string, linkType uint32) (*Pcap, error) {
+    file, err := os.Create(filename)
+    if err != nil {
+        return nil, err
+    }
+
+    // Writing the Global Header for pcap
+    globalHeader := []byte{
+        0xd4, 0xc3, 0xb2, 0xa1, // Magic Number
+        0x02, 0x00, 0x04, 0x00, // Version Major, Version Minor
+        0x00, 0x00, 0x00, 0x00, // Thiszone
+        0x00, 0x00, 0x00, 0x00, // Sigfigs
+        0xff, 0xff, 0x00, 0x00, // Snaplen
+        byte(linkType), byte(linkType >> 8), byte(linkType >> 16), byte(linkType >> 24), // Network
+    }
+    _, err = file.Write(globalHeader)
+    if err != nil {
+        return nil, err
+    }
+
+    return &Pcap{file: file}, nil
+}
+
+func (p *Pcap) Write(data []byte) error {
+    ts := time.Now()
+    tsSec := uint32(ts.Unix())
+    tsUsec := uint32(ts.Nanosecond() / 1000)
+    length := uint32(len(data))
+
+    err := binary.Write(p.file, binary.LittleEndian, tsSec)
+    if err != nil {
+        return err
+    }
+    err = binary.Write(p.file, binary.LittleEndian, tsUsec)
+    if err != nil {
+        return err
+    }
+    err = binary.Write(p.file, binary.LittleEndian, length)
+    if err != nil {
+        return err
+    }
+    err = binary.Write(p.file, binary.LittleEndian, length)
+    if err != nil {
+        return err
+    }
+    _, err = p.file.Write(data)
+    return err
+}
+
+func (p *Pcap) Close() {
+    p.file.Close()
 }
